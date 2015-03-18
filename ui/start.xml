@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Created by ApplusForm.com on 2015.03.18 
+
+	Permission is granted to copy, distribute, modify under the terms of ApplusForm License.
+
+	Copyright (C) 2014 ApplusForm.com. All rights reserved.
+ -->
+<MOML version="1.1.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.applusform.com/xsd/moml_ui_1.1.8.xsd">
+	<THEMES>
+		<THEME id="text" fontSize="30"/>
+		<THEME element="LABEL" parent="text"/>
+		<THEME element="EDIT" parent="text"/>
+		<THEME element="BUTTON" parent="text" defaultImg="#0080ff" pressedImg="#008000" padding="30,20,30,20" textColor="white"/>
+		<THEME id="zipCode" parent="text" layout="150,100" textAlign="center"/>
+		<THEME id="address" parent="text" layout="530,100" multiLine="true" minFontSize="20" ellipsis="none" textAlign="vCenter" />
+	</THEMES>
+	<UILAYOUT portrait="720,1230" landscape="720,1230">
+		<WINDOW layout="0,0,720,1230" img="white"  align="linear:vertical">
+			<STYLEBUTTON  layout="720,100" text="우편번호 검색" overlay1="gradation:tb|#004080|#40a0ff|#0080ff" fontSize="40" textAlign="bottom|center" padding="15" textColor="white"/>
+			<WINDOW padding="20">
+				<LABEL text="시/군/구/읍/면/동/아파트/건물명 : "/>
+				<WINDOW align="linear:subCenter" >
+					<EDIT id="searchWord" layout="500,100" textAlign="vCenter" placeholder="검색 키워드를 입력해주세요." />
+					<BUTTON layout="150,80" text="검색" onClick="function.search" margin="5"/>
+				</WINDOW>
+				
+				<WINDOW layout="680,100" align="linear" >
+					<LABEL id="zipCode" themeId="zipCode"/>
+					<LABEL id="address" themeId="address"/>
+				</WINDOW>
+				<LIST2 id="zipCodeList" layout="680,700" dataList="/DetailListResponse/detailList" img="lightsteelblue">
+					<LISTLAYOUT>
+						<BUTTON layout="0,0,680,100" align="linear" onClick="function.selectZipCode(zipCode.text, address.text)" pressedImg="#80a0ff" img="transparent">
+							<LABEL id="zipCode" themeId="zipCode" text="{xpath.evaluate('zipNo/text()')}" />
+							<LABEL id="address" themeId="address" text="{function.removeDoubleSpace(xpath.evaluate('adres/text()'))}" />
+						</BUTTON>
+					</LISTLAYOUT>
+				</LIST2>
+				<WINDOW align="linear">
+					<LABEL id="status" layout="480,auto" fontSize="20"/>
+					<LABEL layout="200,auto" textAlign="right" text="자료제공 : 우정사업본부" textColor="hotpink" fontSize="20"/>
+				</WINDOW>
+			</WINDOW>
+		</WINDOW>
+	</UILAYOUT>
+
+	<!-- https://www.data.go.kr 에서 오픈API - 지번주소조회 서비스의 [SERVICE KEY]를 발급 받아야 합니다. -->
+	<CMD cmd="userVariable.serviceKey = 'XAQRkAc4BBj5RWTWfdEX5Oc5ry0o4j74tmxD5R4HhJoegNLrNTlRZl6%2BCW%2BX%2BC28DAwBYq73UvcNcdB6n591bg%3D%3D'" />
+	
+	<FUNCTION id="search">
+		<CMD cmd="status.text = '검색중...'" />
+		<CMD cmd="zipCodeList.dataSource = ''"/>
+		
+		<CMD cmd="word = searchWord.text" />
+		<CMD cmd="url='http://openapi.epost.go.kr/postal/retrieveLotNumberAdressService/retrieveLotNumberAdressService/getDetailList?'"/>
+		<CMD cmd="url= url + 'serviceKey=' + userVariable.serviceKey"/>
+		<CMD cmd="url= url + '&amp;srchwrd=' + string.encode(word, 'percent')"/>
+		<CMD cmd="url= url + '&amp;searchSe='"/>
+		
+		<!-- 시,군,구로 끝나면 'sido'로 나머지는 'dong'으로 검색한다.-->
+		<CMD cmd="lastChar = string.sub(word, string.len(word) - 1, 1)" />
+		<CMD condition="lastChar == '시' || lastChar == '군' || lastChar == '구'" >
+			<CMD cmd="url = url + 'sido'" />
+			<ELSECMD cmd="url = url + 'dong'" />
+		</CMD>
+		
+		<CMD cmd="file.read(url, 'function.parse')"/>
+	</FUNCTION>
+	<FUNCTION id="parse(xml)">
+		<CMD cmd="status.text = ''" />
+		<RETURN condition="xpath.evaluateEx(xml, '/DetailListResponse/cmmMsgHeader/successYN/text()') == 'N'" >
+			<CMD cmd="errMsg = xpath.evaluateEx(xml, '/DetailListResponse/cmmMsgHeader/errMsg/text()')" />
+			<CMD cmd="device.systemPopup(errMsg)" />
+		</RETURN>
+		
+		<CMD cmd="status.text = xpath.evaluateEx(xml, 'count(/DetailListResponse/detailList)') + ' 개가 검색되었습니다.'" />
+		<CMD cmd="zipCodeList.dataSource = xml"/>
+	</FUNCTION>
+
+	<FUNCTION id="selectZipCode(zipCode, address)">
+		<CMD cmd="zipCode.text = zipCode" />
+		<CMD cmd="address.text = address" />
+	</FUNCTION>
+
+	<FUNCTION id="removeDoubleSpace(str)">
+		<LOOP condition="string.find(str, '  ') ge 0" cmd="str = string.replace(str, '  ', ' ')" />
+		<RETURN cmd="str" />
+	</FUNCTION>
+</MOML>
