@@ -4,7 +4,7 @@
 		<WINDOW layout="0,0,320,480" img="white" align="linear:vertical" padding="5">
 			<LABEL text="우편번호 검색 : "/>
 			<WINDOW align="linear">
-				<EDIT id="searchWord" layout="250,auto" textAlign="vCenter" placeholder="검색 키워드를 입력해주세요." text="역삼"/>
+				<EDIT id="searchWord" layout="250,auto" textAlign="vCenter" placeholder="검색 키워드를 입력해주세요."/>
 				<BUTTON  layout="50,auto" text="검색" onClick="function.search" />
 			</WINDOW>
 			<LIST2 id="zipCodeList" layout="300,300" dataList="/DetailListResponse/detailList" img="lightsteelblue">
@@ -25,7 +25,7 @@
 		<CMD cmd="url='http://openapi.epost.go.kr/postal/retrieveLotNumberAdressService/retrieveLotNumberAdressService/getDetailList?'"/>
 		<CMD cmd="url= url + 'searchSe=dong&amp;srchwrd=' + string.encode(searchWord.text, 'percent') +'&amp;serviceKey=' + serviceKey"/>
 		<CMD cmd="xml = file.read(url)"/>
-		<RETURN condition="xpath.evaluateEx(xml, '///successYN/text()') == 'N'" >
+		<RETURN condition="xpath.evaluateEx(xml, '//successYN/text()') == 'N'" >
 			<CMD cmd="device.systemPopup(xpath.evaluateEx(xml, '//errMsg/text()'))" />
 		</RETURN>
 		<CMD cmd="zipCodeList.dataSource = xml"/>
