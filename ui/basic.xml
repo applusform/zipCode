@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <MOML version="1.1.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.applusform.com/xsd/moml_ui_1.1.8.xsd">
 	<UILAYOUT portrait="320,480" landscape="320,480">
 		<WINDOW layout="0,0,320,480" img="white" align="linear:vertical" padding="5">
@@ -7,7 +7,7 @@
 				<EDIT id="searchWord" layout="250,auto" textAlign="vCenter" placeholder="검색 키워드를 입력해주세요."/>
 				<BUTTON  layout="50,auto" text="검색" onClick="function.search" />
 			</WINDOW>
-			<LIST2 id="zipCodeList" layout="300,300" dataList="/DetailListResponse/detailList" img="lightsteelblue">
+			<LIST2 id="zipCodeList" layout="300,300" dataList="//detailList" img="lightsteelblue">
 				<LISTLAYOUT>
 					<BUTTON layout="0,0,300,30" align="linear" img="transparent" pressedImg="#80a0ff" onClick="device.systemPopup(zipCode.text)">
 						<LABEL id="zipCode" layout="80,30" text="{xpath.evaluate('zipNo/text()')}" textAlign="vCenter" fontSize="10" />
