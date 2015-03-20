@@ -11,7 +11,7 @@ https://www.data.go.kr 에서 오픈API - 지번주소조회 서비스의 [SERVI
 -
 #### 실행하는 방법
 1. MOML Application Viewer를 설치한 후 실행합니다. [Google Play](https://play.google.com/store/apps/details?id=org.mospi.momlappviewer), [Apple AppStore](http://itunes.apple.com/app/id893554325). 
-2. 주소 입력창에 **williamcloud.github.io/zipCode** 를 입력합니다.
+2. 주소 입력창에 **applusform.github.io/zipCode** 를 입력합니다.
 
 #### 빌드하는 방법 ( .apk, .ipa )
 1. http://ApplusForm.com 사이트의 **[Get Agate]** 메뉴에서 **MOML API Demo Peoject** 를 다운로드 받습니다.
